@@ -40,7 +40,7 @@
         .game-card {
             background: #1e1e1e;
             border-radius: 10px;
-            padding: 20px;
+            padding: 15px;
             margin-bottom: 15px;
             display: flex;
             justify-content: space-between;
@@ -48,23 +48,37 @@
             border: 1px solid #333;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
+        .game-details {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .game-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            object-fit: cover;
+            background-color: #2a2a2a;
+        }
         .game-info h3 {
             color: #fff;
-            font-size: 1.2rem;
-            margin-bottom: 5px;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
         }
         .game-info p {
             color: #aaa;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
         .download-btn {
             background-color: #4CAF50;
             color: white;
-            padding: 10px 20px;
+            padding: 10px 18px;
             border-radius: 6px;
             text-decoration: none;
             font-weight: bold;
+            font-size: 0.9rem;
             transition: background 0.2s;
+            white-space: nowrap;
         }
         .download-btn:hover {
             background-color: #45a049;
@@ -90,13 +104,22 @@
                 title: "Stick Empires (Stick War 2 Mobile)",
                 version: "V5.3",
                 size: "107 MB",
-                link: "https://drive.google.com/uc?export=download&id=1qgGacDDc5asJuWE9UioU8zxw97shxGnk"
+                link: "https://drive.google.com/uc?export=download&id=1qgGacDDc5asJuWE9UioU8zxw97shxGnk",
+                image: "BURAYA_STICK_EMPIRES_RESIM_LINKINI_YAPISTIR" // Buraya Stick Empires resmi
             },
             {
                 title: "Age of History II",
                 version: "v1.0",
                 size: "475 MB",
-                link: "https://drive.google.com/uc?export=download&id=1N3Fpy1CvZOwcySbIGCUHW8wIHnOAkMmO"
+                link: "https://drive.google.com/uc?export=download&id=1N3Fpy1CvZOwcySbIGCUHW8wIHnOAkMmO",
+                image: "BURAYA_AGE_OF_HISTORY_II_RESIM_LINKINI_YAPISTIR" // Buraya AoH2 resmi
+            },
+            {
+                title: "Minecraft PE Final",
+                version: "v1.20.60+", // Tahmini versiyon, güncelleyebilirsin
+                size: "1.14 GB",
+                link: "https://drive.google.com/uc?export=download&id=1FSeugKWWt7OJQfqHTKxItbuCJkm1-B4R",
+                image: "BURAYA_MINECRAFT_RESIM_LINKINI_YAPISTIR" // Buraya Minecraft resmi
             }
         ];
 
@@ -107,9 +130,12 @@
             card.className = 'game-card';
             
             card.innerHTML = `
-                <div class="game-info">
-                    <h3>${game.title}</h3>
-                    <p>Sürüm: ${game.version} | Boyut: ${game.size}</p>
+                <div class="game-details">
+                    <img src="${game.image}" alt="${game.title}" class="game-icon">
+                    <div class="game-info">
+                        <h3>${game.title}</h3>
+                        <p>Sürüm: ${game.version} | Boyut: ${game.size}</p>
+                    </div>
                 </div>
                 <a href="${game.link}" class="download-btn" target="_blank">İndir</a>
             `;
