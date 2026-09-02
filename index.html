@@ -104,22 +104,25 @@
                 title: "Stick Empires (Stick War 2 Mobile)",
                 version: "V5.3",
                 size: "107 MB",
+                filename: "StickEmpires.apk",
                 link: "https://drive.google.com/uc?export=download&id=1qgGacDDc5asJuWE9UioU8zxw97shxGnk",
-                image: "BURAYA_STICK_EMPIRES_RESIM_LINKINI_YAPISTIR" // Buraya Stick Empires resmi
+                image: "BURAYA_STICK_EMPIRES_FOTO_LINKINI_YAPISTIR"
             },
             {
                 title: "Age of History II",
                 version: "v1.0",
                 size: "475 MB",
+                filename: "AgeOfHistory2.apk",
                 link: "https://drive.google.com/uc?export=download&id=1N3Fpy1CvZOwcySbIGCUHW8wIHnOAkMmO",
-                image: "BURAYA_AGE_OF_HISTORY_II_RESIM_LINKINI_YAPISTIR" // Buraya AoH2 resmi
+                image: "BURAYA_AGE_OF_HISTORY_FOTO_LINKINI_YAPISTIR"
             },
             {
                 title: "Minecraft PE Final",
-                version: "v1.20.60+", // Tahmini versiyon, güncelleyebilirsin
+                version: "v1.20+",
                 size: "1.14 GB",
+                filename: "MinecraftPE.apk",
                 link: "https://drive.google.com/uc?export=download&id=1FSeugKWWt7OJQfqHTKxItbuCJkm1-B4R",
-                image: "BURAYA_MINECRAFT_RESIM_LINKINI_YAPISTIR" // Buraya Minecraft resmi
+                image: "BURAYA_MINECRAFT_FOTO_LINKINI_YAPISTIR"
             }
         ];
 
@@ -137,7 +140,7 @@
                         <p>Sürüm: ${game.version} | Boyut: ${game.size}</p>
                     </div>
                 </div>
-                <a href="${game.link}" class="download-btn" target="_blank">İndir</a>
+                <a href="${game.link}" class="download-btn" download="${game.filename}">İndir</a>
             `;
             
             gameListContainer.appendChild(card);
@@ -146,3 +149,4 @@
 
 </body>
 </html>
+
