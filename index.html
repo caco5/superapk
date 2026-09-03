@@ -18,7 +18,7 @@
         }
         header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             padding: 20px;
             background: #1f1f1f;
             border-radius: 12px;
@@ -37,6 +37,21 @@
             max-width: 800px;
             margin: 0 auto;
         }
+        .search-box {
+            width: 100%;
+            padding: 12px 18px;
+            margin-bottom: 20px;
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-box:focus {
+            border-color: #4CAF50;
+        }
         .game-card {
             background: #1e1e1e;
             border-radius: 10px;
@@ -47,6 +62,11 @@
             align-items: center;
             border: 1px solid #333;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .game-card:hover {
+            border-color: #444;
+            transform: translateY(-2px);
         }
         .game-info h3 {
             color: #fff;
@@ -56,6 +76,17 @@
         .game-info p {
             color: #aaa;
             font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+        .badge {
+            display: inline-block;
+            background-color: #2a2a2a;
+            color: #4CAF50;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid #3d3d3d;
         }
         .download-btn {
             background-color: #4CAF50;
@@ -71,6 +102,12 @@
         .download-btn:hover {
             background-color: #45a049;
         }
+        .no-result {
+            text-align: center;
+            color: #777;
+            padding: 20px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -81,9 +118,12 @@
             <p>En iyi mobil oyunlar ve APK arşivleri</p>
         </header>
 
+        <input type="text" id="searchInput" class="search-box" placeholder="Oyun ara...">
+
         <div id="game-list">
             <!-- Oyunlar JavaScript ile buraya eklenecek -->
         </div>
+        <div id="noResult" class="no-result">Aradığın oyun bulunamadı :(</div>
     </div>
 
     <script>
@@ -92,6 +132,7 @@
                 title: "Stick Empires (Stick War 2 Mobile)",
                 version: "V5.3",
                 size: "107 MB",
+                category: "Strateji",
                 filename: "StickEmpires.apk",
                 link: "https://drive.google.com/uc?export=download&id=1qgGacDDc5asJuWE9UioU8zxw97shxGnk"
             },
@@ -99,6 +140,7 @@
                 title: "Age of History II",
                 version: "v1.0",
                 size: "475 MB",
+                category: "Strateji",
                 filename: "AgeOfHistory2.apk",
                 link: "https://drive.google.com/uc?export=download&id=1N3Fpy1CvZOwcySbIGCUHW8wIHnOAkMmO"
             },
@@ -106,6 +148,7 @@
                 title: "Minecraft PE Final",
                 version: "v1.20+",
                 size: "1.14 GB",
+                category: "Hayatta Kalma / Sandbox",
                 filename: "MinecraftPE.apk",
                 link: "https://drive.google.com/uc?export=download&id=1FSeugKWWt7OJQfqHTKxItbuCJkm1-B4R"
             },
@@ -113,26 +156,51 @@
                 title: "Stardew Valley",
                 version: "v1.6.14.0",
                 size: "395.7 MB",
+                category: "RPG / Simülasyon",
                 filename: "StardewValley.apk",
                 link: "https://drive.google.com/uc?export=download&id=1tp3OrxSpSVp-HnniXv1JK_fHAzmaxkDx"
             }
         ];
 
         const gameListContainer = document.getElementById('game-list');
+        const searchInput = document.getElementById('searchInput');
+        const noResult = document.getElementById('noResult');
 
-        games.forEach(game => {
-            const card = document.createElement('div');
-            card.className = 'game-card';
-            
-            card.innerHTML = `
-                <div class="game-info">
-                    <h3>${game.title}</h3>
-                    <p>Sürüm: ${game.version} | Boyut: ${game.size}</p>
-                </div>
-                <a href="${game.link}" class="download-btn" download="${game.filename}">İndir</a>
-            `;
-            
-            gameListContainer.appendChild(card);
+        function renderGames(filterText = '') {
+            gameListContainer.innerHTML = '';
+            const filteredGames = games.filter(game => 
+                game.title.toLowerCase().includes(filterText.toLowerCase()) ||
+                game.category.toLowerCase().includes(filterText.toLowerCase())
+            );
+
+            if (filteredGames.length === 0) {
+                noResult.style.display = 'block';
+                return;
+            } else {
+                noResult.style.display = 'none';
+            }
+
+            filteredGames.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                
+                card.innerHTML = `
+                    <div class="game-info">
+                        <h3>${game.title}</h3>
+                        <p>Sürüm: ${game.version} | Boyut: ${game.size}</p>
+                        <span class="badge">${game.category}</span>
+                    </div>
+                    <a href="${game.link}" class="download-btn" download="${game.filename}">İndir</a>
+                `;
+                
+                gameListContainer.appendChild(card);
+            });
+        }
+
+        renderGames();
+
+        searchInput.addEventListener('input', (e) => {
+            renderGames(e.target.value);
         });
     </script>
 
