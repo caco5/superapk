@@ -587,24 +587,12 @@
                     <div class="btn-group">
                         <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(${game.id})">❤️</button>
                         <button class="detail-btn" onclick="openModal('${game.title.replace(/'/g, "\\'")}', '${game.desc.replace(/'/g, "\\'")}')">ℹ️</button>
-                        <button class="download-btn" onclick="downloadGame('${game.link}')">İndir</button>
+                        <a href="${game.link}" class="download-btn" target="_blank">İndir</a>
                     </div>
                 `;
                 
                 gameListContainer.appendChild(card);
             });
-        }
-
-        // Arkada gizli iframe oluşturarak beyaz sayfaya gitmeden direkt indirmeyi tetikler
-        window.downloadGame = function(url) {
-            let iframe = document.getElementById('downloadFrame');
-            if (!iframe) {
-                iframe = document.createElement('iframe');
-                iframe.id = 'downloadFrame';
-                iframe.style.display = 'none';
-                document.body.appendChild(iframe);
-            }
-            iframe.src = url;
         }
 
         function renderComingSoon() {
