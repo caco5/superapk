@@ -52,18 +52,23 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             position: relative;
         }
-        .theme-toggle {
+        .header-btn {
             position: absolute;
             top: 20px;
-            right: 20px;
             background: var(--badge-bg);
             border: 1px solid var(--border-color);
             color: var(--text-color);
             padding: 8px 12px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: bold;
+        }
+        .rocket-toggle {
+            left: 20px;
+        }
+        .theme-toggle {
+            right: 20px;
         }
         header h1 {
             color: var(--text-color);
@@ -125,13 +130,6 @@
             background-color: #4CAF50;
             color: white;
             border-color: #4CAF50;
-        }
-        .section-title {
-            font-size: 1.1rem;
-            margin: 25px 0 12px 0;
-            color: var(--text-color);
-            border-left: 4px solid #4CAF50;
-            padding-left: 8px;
         }
         .game-card {
             background: var(--card-bg);
@@ -205,22 +203,6 @@
             color: #e53935;
             border-color: #e53935;
         }
-        /* Yakında Gelecekler Listesi */
-        .coming-soon-card {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 12px 18px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px dashed var(--border-color);
-            opacity: 0.8;
-        }
-        .coming-soon-card span {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
         /* Modal Tasarımı */
         .modal {
             display: none;
@@ -242,7 +224,7 @@
             position: relative;
         }
         .modal-content h2 {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             color: var(--text-color);
         }
         .modal-content p {
@@ -250,6 +232,20 @@
             font-size: 0.95rem;
             margin-bottom: 20px;
             line-height: 1.5;
+        }
+        .coming-soon-item {
+            background: var(--badge-bg);
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px dashed var(--border-color);
+        }
+        .coming-soon-item span {
+            color: var(--text-muted);
+            font-size: 0.8rem;
         }
         .close-modal {
             background: #e53935;
@@ -260,6 +256,7 @@
             cursor: pointer;
             font-weight: bold;
             float: right;
+            margin-top: 10px;
         }
         .no-result {
             text-align: center;
@@ -290,7 +287,8 @@
 
     <div class="container">
         <header>
-            <button class="theme-toggle" id="themeToggle">☀️ / 🌙</button>
+            <button class="header-btn rocket-toggle" id="rocketBtn">🚀</button>
+            <button class="header-btn theme-toggle" id="themeToggle">☀️ / 🌙</button>
             <h1>SuperAPK</h1>
             <p>En iyi mobil oyunlar ve APK arşivleri</p>
             <div class="stats-bar" id="statsBar">Arşivde 4 Oyun Yüklü</div>
@@ -308,9 +306,6 @@
 
         <div id="game-list"></div>
         <div id="noResult" class="no-result">Aradığın oyun bulunamadı :(</div>
-
-        <div class="section-title">Çok Yakında Eklenecekler 🚀</div>
-        <div id="comingSoonList"></div>
     </div>
 
     <!-- Detay Modalı -->
@@ -319,6 +314,15 @@
             <h2 id="modalTitle">Oyun Adı</h2>
             <p id="modalDesc">Oyun açıklaması buraya gelecek.</p>
             <button class="close-modal" id="closeModal">Kapat</button>
+        </div>
+    </div>
+
+    <!-- Çok Yakında Modalı -->
+    <div class="modal" id="comingSoonModal">
+        <div class="modal-content">
+            <h2>🚀 Çok Yakında Eklenecekler</h2>
+            <div id="comingSoonList"></div>
+            <button class="close-modal" id="closeComingSoon">Kapat</button>
         </div>
     </div>
 
@@ -381,11 +385,14 @@
         const searchInput = document.getElementById('searchInput');
         const noResult = document.getElementById('noResult');
         const themeToggle = document.getElementById('themeToggle');
+        const rocketBtn = document.getElementById('rocketBtn');
         const categoryContainer = document.getElementById('categoryContainer');
         const gameModal = document.getElementById('gameModal');
+        const comingSoonModal = document.getElementById('comingSoonModal');
         const modalTitle = document.getElementById('modalTitle');
         const modalDesc = document.getElementById('modalDesc');
         const closeModal = document.getElementById('closeModal');
+        const closeComingSoon = document.getElementById('closeComingSoon');
         const toTopBtn = document.getElementById('toTopBtn');
 
         let currentCategory = 'Tümü';
@@ -440,7 +447,7 @@
             comingSoonContainer.innerHTML = '';
             comingSoonGames.forEach(game => {
                 const item = document.createElement('div');
-                item.className = 'coming-soon-card';
+                item.className = 'coming-soon-item';
                 item.innerHTML = `<strong>${game.title}</strong> <span>${game.note}</span>`;
                 comingSoonContainer.appendChild(item);
             });
@@ -466,8 +473,17 @@
             gameModal.style.display = 'none';
         });
 
+        rocketBtn.addEventListener('click', () => {
+            comingSoonModal.style.display = 'flex';
+        });
+
+        closeComingSoon.addEventListener('click', () => {
+            comingSoonModal.style.display = 'none';
+        });
+
         window.addEventListener('click', (e) => {
             if (e.target === gameModal) gameModal.style.display = 'none';
+            if (e.target === comingSoonModal) comingSoonModal.style.display = 'none';
         });
 
         renderGames();
