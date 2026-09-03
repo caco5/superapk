@@ -5,34 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SuperAPK - Mobil Oyun Arşivi</title>
     <style>
+        :root {
+            --bg-color: #121212;
+            --header-bg: #1f1f1f;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --text-muted: #888;
+            --border-color: #333;
+            --card-hover: #444;
+            --badge-bg: #2a2a2a;
+            --badge-border: #3d3d3d;
+        }
+
+        .light-mode {
+            --bg-color: #f4f4f9;
+            --header-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-color: #222222;
+            --text-muted: #666;
+            --border-color: #ddd;
+            --card-hover: #ccc;
+            --badge-bg: #eaeaea;
+            --badge-border: #d0d0d0;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
         }
         body {
-            background-color: #121212;
-            color: #e0e0e0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             padding: 20px;
         }
         header {
             text-align: center;
             margin-bottom: 25px;
             padding: 22px;
-            background: #1f1f1f;
+            background: var(--header-bg);
             border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            position: relative;
+        }
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--badge-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: bold;
         }
         header h1 {
-            color: #ffffff;
+            color: var(--text-color);
             font-size: 2.2rem;
             margin-bottom: 5px;
-            text-shadow: 0 0 12px rgba(76, 175, 80, 0.6);
+            text-shadow: 0 0 12px rgba(76, 175, 80, 0.4);
         }
         header p {
-            color: #888;
+            color: var(--text-muted);
             font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+        .stats-bar {
+            display: inline-block;
+            background: var(--badge-bg);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #4CAF50;
+            font-weight: bold;
+            border: 1px solid var(--border-color);
         }
         .container {
             max-width: 800px;
@@ -41,53 +91,83 @@
         .search-box {
             width: 100%;
             padding: 12px 18px;
-            margin-bottom: 20px;
-            background: #1e1e1e;
-            border: 1px solid #333;
+            margin-bottom: 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 10px;
-            color: #fff;
+            color: var(--text-color);
             font-size: 1rem;
             outline: none;
-            transition: border-color 0.2s;
         }
         .search-box:focus {
             border-color: #4CAF50;
         }
+        .categories {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .cat-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+        .cat-btn.active, .cat-btn:hover {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
         .game-card {
-            background: #1e1e1e;
+            background: var(--card-bg);
             border-radius: 10px;
             padding: 18px 20px;
             margin-bottom: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid #333;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             transition: transform 0.2s, border-color 0.2s;
         }
         .game-card:hover {
-            border-color: #444;
+            border-color: var(--card-hover);
             transform: translateY(-2px);
         }
+        .game-info {
+            cursor: pointer;
+            flex-grow: 1;
+        }
         .game-info h3 {
-            color: #fff;
+            color: var(--text-color);
             font-size: 1.1rem;
             margin-bottom: 5px;
         }
         .game-info p {
-            color: #aaa;
+            color: var(--text-muted);
             font-size: 0.85rem;
             margin-bottom: 8px;
         }
         .badge {
             display: inline-block;
-            background-color: #2a2a2a;
+            background-color: var(--badge-bg);
             color: #4CAF50;
             font-size: 0.75rem;
             font-weight: bold;
             padding: 3px 8px;
             border-radius: 4px;
-            border: 1px solid #3d3d3d;
+            border: 1px solid var(--badge-border);
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
         .download-btn {
             background-color: #4CAF50;
@@ -97,15 +177,63 @@
             text-decoration: none;
             font-weight: bold;
             font-size: 0.9rem;
-            transition: background 0.2s;
             white-space: nowrap;
         }
         .download-btn:hover {
             background-color: #45a049;
         }
+        .detail-btn {
+            background: var(--badge-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        /* Modal Tasarımı */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 450px;
+            width: 100%;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .modal-content h2 {
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+        .modal-content p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .close-modal {
+            background: #e53935;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            float: right;
+        }
         .no-result {
             text-align: center;
-            color: #777;
+            color: var(--text-muted);
             padding: 20px;
             display: none;
         }
@@ -115,16 +243,32 @@
 
     <div class="container">
         <header>
+            <button class="theme-toggle" id="themeToggle">☀️ / 🌙</button>
             <h1>SuperAPK</h1>
             <p>En iyi mobil oyunlar ve APK arşivleri</p>
+            <div class="stats-bar" id="statsBar">Arşivde 4 Oyun Yüklü</div>
         </header>
 
         <input type="text" id="searchInput" class="search-box" placeholder="Oyun ara...">
 
-        <div id="game-list">
-            <!-- Oyunlar JavaScript ile buraya eklenecek -->
+        <div class="categories" id="categoryContainer">
+            <button class="cat-btn active" data-cat="Tümü">Tümü</button>
+            <button class="cat-btn" data-cat="Strateji">Strateji</button>
+            <button class="cat-btn" data-cat="Hayatta Kalma / Sandbox">Hayatta Kalma</button>
+            <button class="cat-btn" data-cat="RPG / Simülasyon">RPG / Simülasyon</button>
         </div>
+
+        <div id="game-list"></div>
         <div id="noResult" class="no-result">Aradığın oyun bulunamadı :(</div>
+    </div>
+
+    <!-- Detay Modalı -->
+    <div class="modal" id="gameModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Oyun Adı</h2>
+            <p id="modalDesc">Oyun açıklaması buraya gelecek.</p>
+            <button class="close-modal" id="closeModal">Kapat</button>
+        </div>
     </div>
 
     <script>
@@ -134,6 +278,7 @@
                 version: "V5.3",
                 size: "107 MB",
                 category: "Strateji",
+                desc: "Klasik çöp adam strateji oyununun mobil versiyonu. Ordunu kur, stratejini belirle ve düşmanları alt et!",
                 filename: "StickEmpires.apk",
                 link: "https://drive.google.com/uc?export=download&id=1qgGacDDc5asJuWE9UioU8zxw97shxGnk"
             },
@@ -142,6 +287,7 @@
                 version: "v1.0",
                 size: "475 MB",
                 category: "Strateji",
+                desc: "Dünya haritasında medeniyetleri yöneterek dünyayı fethedebileceğin kapsamlı bir strateji ve savaş oyunu.",
                 filename: "AgeOfHistory2.apk",
                 link: "https://drive.google.com/uc?export=download&id=1N3Fpy1CvZOwcySbIGCUHW8wIHnOAkMmO"
             },
@@ -150,6 +296,7 @@
                 version: "v1.20+",
                 size: "1.14 GB",
                 category: "Hayatta Kalma / Sandbox",
+                desc: "Sınırsız dünyalar inşa edebileceğin, arkadaşlarınla oynayabileceğin efsanevi hayatta kalma ve blok oyunu.",
                 filename: "MinecraftPE.apk",
                 link: "https://drive.google.com/uc?export=download&id=1FSeugKWWt7OJQfqHTKxItbuCJkm1-B4R"
             },
@@ -158,6 +305,7 @@
                 version: "v1.6.14.0",
                 size: "395.7 MB",
                 category: "RPG / Simülasyon",
+                desc: "Kırsal hayata adım at, kendi çiftliğini kur, mahsuller yetiştir, kasaba halkıyla tanış ve evlen!",
                 filename: "StardewValley.apk",
                 link: "https://drive.google.com/uc?export=download&id=1tp3OrxSpSVp-HnniXv1JK_fHAzmaxkDx"
             }
@@ -166,13 +314,23 @@
         const gameListContainer = document.getElementById('game-list');
         const searchInput = document.getElementById('searchInput');
         const noResult = document.getElementById('noResult');
+        const themeToggle = document.getElementById('themeToggle');
+        const categoryContainer = document.getElementById('categoryContainer');
+        const gameModal = document.getElementById('gameModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDesc = document.getElementById('modalDesc');
+        const closeModal = document.getElementById('closeModal');
+
+        let currentCategory = 'Tümü';
 
         function renderGames(filterText = '') {
             gameListContainer.innerHTML = '';
-            const filteredGames = games.filter(game => 
-                game.title.toLowerCase().includes(filterText.toLowerCase()) ||
-                game.category.toLowerCase().includes(filterText.toLowerCase())
-            );
+            const filteredGames = games.filter(game => {
+                const matchesSearch = game.title.toLowerCase().includes(filterText.toLowerCase()) ||
+                                      game.category.toLowerCase().includes(filterText.toLowerCase());
+                const matchesCat = currentCategory === 'Tümü' || game.category === currentCategory;
+                return matchesSearch && matchesCat;
+            });
 
             if (filteredGames.length === 0) {
                 noResult.style.display = 'block';
@@ -186,22 +344,52 @@
                 card.className = 'game-card';
                 
                 card.innerHTML = `
-                    <div class="game-info">
+                    <div class="game-info" onclick="openModal('${game.title}', '${game.desc}')">
                         <h3>${game.title}</h3>
                         <p>Sürüm: ${game.version} | Boyut: ${game.size}</p>
                         <span class="badge">${game.category}</span>
                     </div>
-                    <a href="${game.link}" class="download-btn" download="${game.filename}">İndir</a>
+                    <div class="btn-group">
+                        <button class="detail-btn" onclick="openModal('${game.title}', '${game.desc}')">ℹ️</button>
+                        <a href="${game.link}" class="download-btn" download="${game.filename}">İndir</a>
+                    </div>
                 `;
                 
                 gameListContainer.appendChild(card);
             });
         }
 
+        function openModal(title, desc) {
+            modalTitle.innerText = title;
+            modalDesc.innerText = desc;
+            gameModal.style.display = 'flex';
+        }
+
+        closeModal.addEventListener('click', () => {
+            gameModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === gameModal) gameModal.style.display = 'none';
+        });
+
         renderGames();
 
         searchInput.addEventListener('input', (e) => {
             renderGames(e.target.value);
+        });
+
+        categoryContainer.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                currentCategory = e.target.getAttribute('data-cat');
+                renderGames(searchInput.value);
+            }
+        });
+
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
         });
     </script>
 
