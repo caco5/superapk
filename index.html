@@ -40,6 +40,8 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             padding: 20px;
+            position: relative;
+            padding-bottom: 50px;
         }
         header {
             text-align: center;
@@ -124,6 +126,13 @@
             color: white;
             border-color: #4CAF50;
         }
+        .section-title {
+            font-size: 1.1rem;
+            margin: 25px 0 12px 0;
+            color: var(--text-color);
+            border-left: 4px solid #4CAF50;
+            padding-left: 8px;
+        }
         .game-card {
             background: var(--card-bg);
             border-radius: 10px;
@@ -166,13 +175,13 @@
         }
         .btn-group {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
         }
         .download-btn {
             background-color: #4CAF50;
             color: white;
-            padding: 10px 18px;
+            padding: 10px 16px;
             border-radius: 6px;
             text-decoration: none;
             font-weight: bold;
@@ -182,7 +191,7 @@
         .download-btn:hover {
             background-color: #45a049;
         }
-        .detail-btn {
+        .detail-btn, .fav-btn {
             background: var(--badge-bg);
             border: 1px solid var(--border-color);
             color: var(--text-color);
@@ -190,6 +199,27 @@
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .fav-btn.active {
+            color: #e53935;
+            border-color: #e53935;
+        }
+        /* Yakında Gelecekler Listesi */
+        .coming-soon-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 12px 18px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px dashed var(--border-color);
+            opacity: 0.8;
+        }
+        .coming-soon-card span {
+            color: var(--text-muted);
+            font-size: 0.85rem;
         }
         /* Modal Tasarımı */
         .modal {
@@ -237,6 +267,23 @@
             padding: 20px;
             display: none;
         }
+        /* Yukarı Çık Butonu */
+        .to-top-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 99;
+        }
     </style>
 </head>
 <body>
@@ -253,6 +300,7 @@
 
         <div class="categories" id="categoryContainer">
             <button class="cat-btn active" data-cat="Tümü">Tümü</button>
+            <button class="cat-btn" data-cat="Favoriler">❤️ Favorilerim</button>
             <button class="cat-btn" data-cat="Strateji">Strateji</button>
             <button class="cat-btn" data-cat="Hayatta Kalma / Sandbox">Hayatta Kalma</button>
             <button class="cat-btn" data-cat="RPG / Simülasyon">RPG / Simülasyon</button>
@@ -260,6 +308,9 @@
 
         <div id="game-list"></div>
         <div id="noResult" class="no-result">Aradığın oyun bulunamadı :(</div>
+
+        <div class="section-title">Çok Yakında Eklenecekler 🚀</div>
+        <div id="comingSoonList"></div>
     </div>
 
     <!-- Detay Modalı -->
@@ -271,9 +322,12 @@
         </div>
     </div>
 
+    <button class="to-top-btn" id="toTopBtn">↑</button>
+
     <script>
         const games = [
             {
+                id: 1,
                 title: "Stick Empires (Stick War 2 Mobile)",
                 version: "V5.3",
                 size: "107 MB",
@@ -283,6 +337,7 @@
                 link: "https://drive.google.com/uc?export=download&id=1qgGacDDc5asJuWE9UioU8zxw97shxGnk"
             },
             {
+                id: 2,
                 title: "Age of History II",
                 version: "v1.0",
                 size: "475 MB",
@@ -292,6 +347,7 @@
                 link: "https://drive.google.com/uc?export=download&id=1N3Fpy1CvZOwcySbIGCUHW8wIHnOAkMmO"
             },
             {
+                id: 3,
                 title: "Minecraft PE Final",
                 version: "v1.20+",
                 size: "1.14 GB",
@@ -301,6 +357,7 @@
                 link: "https://drive.google.com/uc?export=download&id=1FSeugKWWt7OJQfqHTKxItbuCJkm1-B4R"
             },
             {
+                id: 4,
                 title: "Stardew Valley",
                 version: "v1.6.14.0",
                 size: "395.7 MB",
@@ -311,7 +368,16 @@
             }
         ];
 
+        const comingSoonGames = [
+            { title: "Ultrakill Mobile", note: "Test aşamasında 🚀" },
+            { title: "GTA San Andreas Mobile", note: "Optimizasyon aşamasında" },
+            { title: "Terraria Full APK", note: "Yükleniyor..." }
+        ];
+
+        let favorites = JSON.parse(localStorage.getItem('superapk_favs')) || [];
+
         const gameListContainer = document.getElementById('game-list');
+        const comingSoonContainer = document.getElementById('comingSoonList');
         const searchInput = document.getElementById('searchInput');
         const noResult = document.getElementById('noResult');
         const themeToggle = document.getElementById('themeToggle');
@@ -320,15 +386,24 @@
         const modalTitle = document.getElementById('modalTitle');
         const modalDesc = document.getElementById('modalDesc');
         const closeModal = document.getElementById('closeModal');
+        const toTopBtn = document.getElementById('toTopBtn');
 
         let currentCategory = 'Tümü';
 
         function renderGames(filterText = '') {
             gameListContainer.innerHTML = '';
+            
             const filteredGames = games.filter(game => {
                 const matchesSearch = game.title.toLowerCase().includes(filterText.toLowerCase()) ||
                                       game.category.toLowerCase().includes(filterText.toLowerCase());
-                const matchesCat = currentCategory === 'Tümü' || game.category === currentCategory;
+                
+                let matchesCat = true;
+                if (currentCategory === 'Favoriler') {
+                    matchesCat = favorites.includes(game.id);
+                } else if (currentCategory !== 'Tümü') {
+                    matchesCat = game.category === currentCategory;
+                }
+                
                 return matchesSearch && matchesCat;
             });
 
@@ -340,23 +415,45 @@
             }
 
             filteredGames.forEach(game => {
+                const isFav = favorites.includes(game.id);
                 const card = document.createElement('div');
                 card.className = 'game-card';
                 
                 card.innerHTML = `
-                    <div class="game-info" onclick="openModal('${game.title}', '${game.desc}')">
+                    <div class="game-info" onclick="openModal('${game.title.replace(/'/g, "\\'")}', '${game.desc.replace(/'/g, "\\'")}')">
                         <h3>${game.title}</h3>
                         <p>Sürüm: ${game.version} | Boyut: ${game.size}</p>
                         <span class="badge">${game.category}</span>
                     </div>
                     <div class="btn-group">
-                        <button class="detail-btn" onclick="openModal('${game.title}', '${game.desc}')">ℹ️</button>
+                        <button class="fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(${game.id})">❤️</button>
+                        <button class="detail-btn" onclick="openModal('${game.title.replace(/'/g, "\\'")}', '${game.desc.replace(/'/g, "\\'")}')">ℹ️</button>
                         <a href="${game.link}" class="download-btn" download="${game.filename}">İndir</a>
                     </div>
                 `;
                 
                 gameListContainer.appendChild(card);
             });
+        }
+
+        function renderComingSoon() {
+            comingSoonContainer.innerHTML = '';
+            comingSoonGames.forEach(game => {
+                const item = document.createElement('div');
+                item.className = 'coming-soon-card';
+                item.innerHTML = `<strong>${game.title}</strong> <span>${game.note}</span>`;
+                comingSoonContainer.appendChild(item);
+            });
+        }
+
+        window.toggleFav = function(id) {
+            if (favorites.includes(id)) {
+                favorites = favorites.filter(favId => favId !== id);
+            } else {
+                favorites.push(id);
+            }
+            localStorage.setItem('superapk_favs', JSON.stringify(favorites));
+            renderGames(searchInput.value);
         }
 
         function openModal(title, desc) {
@@ -374,6 +471,7 @@
         });
 
         renderGames();
+        renderComingSoon();
 
         searchInput.addEventListener('input', (e) => {
             renderGames(e.target.value);
@@ -390,6 +488,18 @@
 
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('light-mode');
+        });
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                toTopBtn.style.display = 'block';
+            } else {
+                toTopBtn.style.display = 'none';
+            }
+        });
+
+        toTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     </script>
 
